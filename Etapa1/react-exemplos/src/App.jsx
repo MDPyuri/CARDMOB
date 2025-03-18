@@ -5,11 +5,14 @@ import './App.css'
 
 import Counter from './components/Counter'
 import Photo from './components/Photo'
+import Album from './components/Album'
 
 function App() {
   const [count, setCount] = useState(0);
   //cria as variáveis de estado para armazenar as fotos
   const [photos, setPhotos] = useState([]);
+  //cria a variável de estado para armazenar o id do álbum
+  const [albumId, setalbumId] = useState(1);
 
   //método para buscar as fotos
   const fetchPhotos = async () => {
@@ -58,8 +61,17 @@ function App() {
 
       </article>
 
+      <div>
+        <button onClick={() => setalbumId(1)}>Album #1</button>
+        <button onClick={() => setalbumId(2)}>Album #2</button>
+        <button onClick={() => setalbumId(3)}>Album #3</button>
+        <button onClick={() => setalbumId(4)}>Album #4</button>
+      </div>
+
+      <Album albumId={albumId} />
+
     </>
   )
 }
 
-export default App
+export default App;
