@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Item from "./Contato";
 
 const ContatoList = ({ name }) => {
-  const [contatos, setContatos] = useState([]); // Array de contatos
+  const [contatos, setContatos] = useState([]);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -107,7 +107,7 @@ const ContatoList = ({ name }) => {
               </>
             ) : (
               <>
-                <Item contato={contato} /> {/* Passa o objeto contato como prop */}
+                <Item nome={contato.nome} email={contato.email} telefone={contato.telefone} />
                 <button onClick={() => startEditing(contato.id, contato)}>
                   Editar
                 </button>
