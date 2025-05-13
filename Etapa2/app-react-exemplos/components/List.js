@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     textTitle: {
         color: "saddlebrown",
         fontWeight: "bold",
-        
     },
     textTouchable: {
         color: "beige"

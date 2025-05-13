@@ -15,60 +15,40 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-          <List/>
+            <List/>
+            <View style={styles.brownbox}></View>
+            <View style={styles.chocolatebox}></View>
+            <View style={styles.burlybox}></View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        marginTop: 50,
-        padding: 20,
-        justifyContent: 'center',
-    },
-    text: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        fontFamily: 'cursive',
-    },
-    buttonContainer: {
-        marginTop: 12,
-        flexDirection: 'row',
-        gap: 10,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
-    },
-    list: {
-        marginTop: 20,
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
         justifyContent: 'space-between',
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 5,
+        alignItems: 'center',
+        backgroundColor: 'darkgray',
+        height: '100%',
+        paddingTop: 50,
+        paddingBottom: 50,
     },
-    itemText: {
-        flex: 1,
-        marginRight: 10,
+    brownbox: {
+        backgroundColor: '#8B4513',
+        width: 150,
+        height: 150,
+        borderRadius: 15,
     },
-    buttons: {
-        flexDirection: 'row',
+    chocolatebox: {
+        backgroundColor: '#D2691E',
+        width: 150,
+        height: 150,
+        borderRadius: 15,
     },
-    editInput: {
-        flex: 1,
-        marginRight: 10,
-        borderColor: 'gray',
-        borderWidth: 1,
-        paddingHorizontal: 10,
+    burlybox: {
+        backgroundColor: '#deb887',
+        width: 150,
+        height: 150,
+        borderRadius: 15,
     },
 });
