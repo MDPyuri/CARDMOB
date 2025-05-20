@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "id": "1d47",
+      "nome": "Pirulito Flamejante da Amber",
+      "descricao": "Um pirulito picante com sabor de canela e pimenta, perfeito para quem gosta de emoções fortes como a Amber!"
+    },
+    {
+      "id": "797d",
+      "nome": "Caramelo Explosivo do Dynamike",
+      "descricao": "Balas de caramelo recheadas com cristais efervescentes que explodem na boca — cuidado com a dose!"
+    },
+    {
+      "id": "df56",
+      "nome": "Jujubas Curativas da Pam",
+      "descricao": "Docinhos de frutas com toque mentolado, que trazem uma sensação reconfortante como o suporte da Pam."
+    },
+    {
+      "id": "0280",
+      "nome": "Marshmallow Sombrio da Emz",
+      "descricao": "Um doce gótico e açucarado, com sabor de amora e cobertura roxa brilhante, inspirado no estilo da Emz."
+    },
+    {
+      "id": "4240",
+      "nome": "Goma Selvagem do Leon",
+      "descricao": "Balas de goma camaleônicas que mudam de sabor e cor — nunca se sabe o que vem com o Leon!"
+    },
+    {
+      "id": "9f1d",
+      "nome": "Chocolate Congelante da Lou",
+      "descricao": "Tabletes de chocolate branco com cristais gelados de menta, direto do congelador de Lou."
+    },
+    {
+      "id": "7fb6",
+      "nome": "Doce Estelar da Shelly",
+      "descricao": "Balas duras com glitter comestível e um sabor frutado explosivo, como o primeiro tiro da Shelly."
+    },
+    {
+      "id": "553c",
+      "nome": "Trufa Real da Colette",
+      "descricao": "Trufas de chocolate recheadas com creme de morango ácido, perfeitas para fãs obsessivos como a Colette."
+    },
+    {
+      "id": "7d6a",
+      "nome": "Pastilha Robótica do 8-Bit",
+      "descricao": "Pastilhas pixeladas com sabores retrô e embalagem em formato de cartucho, dignas do 8-Bit."
+    },
+    {
+      "id": "802f",
+      "nome": "Pipoca Estelar do Stu",
+      "descricao": "Pipoca doce com toque de caramelo e pimenta, com glitter azul, servida direto das acrobacias do Stu!"
+    }
+  ]
+}
