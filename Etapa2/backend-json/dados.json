@@ -1,52 +1,39 @@
 {
-  "items": [
+  "compras": [
     {
-      "id": "797d",
-      "text": "Caramelo Explosivo do Dynamike",
-      "descricao": "Balas de caramelo recheadas com cristais efervescentes que explodem na boca — cuidado com a dose!"
-    },
-    {
-      "id": "df56",
-      "text": "Jujubas Curativas da Pam",
-      "descricao": "Docinhos de frutas com toque mentolado, que trazem uma sensação reconfortante como o suporte da Pam."
-    },
-    {
-      "id": "0280",
-      "text": "Marshmallow Sombrio da Emz",
-      "descricao": "Um doce gótico e açucarado, com sabor de amora e cobertura roxa brilhante, inspirado no estilo da Emz."
-    },
-    {
-      "id": "4240",
-      "text": "Goma Selvagem do Leon",
-      "descricao": "Balas de goma camaleônicas que mudam de sabor e cor — nunca se sabe o que vem com o Leon!"
-    },
-    {
-      "id": "9f1d",
-      "text": "Chocolate Congelante da Lou",
-      "descricao": "Tabletes de chocolate branco com cristais gelados de menta, direto do congelador de Lou."
-    },
-    {
-      "id": "553c",
-      "text": "Trufa Real da Colette",
-      "descricao": "Trufas de chocolate recheadas com creme de morango ácido, perfeitas para fãs obsessivos como a Colette."
+      "item": "manteigaaa",
+      "quantidade": 6,
+      "id": "553c"
     },
     {
       "id": "7d6a",
-      "text": "Pastilha Robótica do 8-Bit",
-      "descricao": "Pastilhas pixeladas com sabores retrô e embalagem em formato de cartucho, dignas do 8-Bit."
+      "quantidade": 4,
+      "item": "ovos"
     },
     {
       "id": "802f",
-      "text": "Pipoca Estelar do Stu",
-      "descricao": "Pipoca doce com toque de caramelo e pimenta, com glitter azul, servida direto das acrobacias do Stu!"
+      "quantidade": 1,
+      "item": "fermento"
     },
     {
-      "id": "7d4b",
-      "text": "Stardrop"
+      "id": "845b",
+      "item": "agua",
+      "quantidade": 1
     },
     {
-      "text": "Mega Box",
-      "id": "acd3"
+      "id": "4088",
+      "item": "coco",
+      "atq": "3",
+      "quantidade": 1
+    },
+    {
+      "quantidade": 0,
+      "id": "0ee8"
+    },
+    {
+      "id": "718e",
+      "item": "nome",
+      "quantidade": 7
     }
   ]
 }

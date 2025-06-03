@@ -1,212 +1,289 @@
-import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import {
-	StyleSheet,
-	Text,
-	View,
-	Button,
-	Image,
-	TextInput,
-	FlatList,
+    StyleSheet,
+    Text,
+    View,
+    Button,
+    FlatList,
+    TextInput,
     Alert,
-} from "react-native";
+} from 'react-native';
 
-//Indicar endereço do backend
-const BASE_URL = "http://10.81.205.27:3000";
+// Indicar endereço do backend
+const BASE_URL = 'http://10.81.205.27:3000';
 
 export default function App() {
-	const [counter, setCounter] = useState(0);
-	// CRUD em memória
-	const [items, setItems] = useState([]);
-	const [text, setText] = useState("");
-	const [editItemId, setEditItemId] = useState(null);
-	const [editItemText, setEditItemText] = useState("");
-	const [loading, setLoading] = useState(false);
+    const [compras, setCompras] = useState([]); // Lista de compras do backend
+    const [newItem, setNewItem] = useState(''); // Novo item para adicionar
+    const [newQuantidade, setNewQuantidade] = useState(''); // Nova quantidade para adicionar
+    const [editingId, setEditingId] = useState(null); // ID do item em edição
+    const [editingText, setEditingText] = useState(''); // Texto do item em edição
+    const [editingQuantidade, setEditingQuantidade] = useState(''); // Quantidade do item em edição
 
-	const incrementCounter = () => {
-		setCounter(counter + 1);
-	};
+    // Buscar todos os itens da tabela de compras no backend
+    const fetchCompras = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/compras`);
+            const data = await response.json();
+            setCompras(data); // Atualiza o estado com os itens recebidos
+        } catch (error) {
+            console.error('Erro ao buscar compras:', error);
+        }
+    };
 
-	const decrementCounter = () => {
-		setCounter(counter - 1);
-	};
-
-	//buscar todos os itens do backend
-	const fetchItems = async () => {
-		try {
-			//executa o que precisa, se der erro entra no catch
-			const response = await fetch(`${BASE_URL}/items`);
-			const data = await response.json();
-			console.log(JSON.stringify(data)); //para ver o que veio do backend
-			setItems(data); //atualiza o estado com os itens recebidos
-		} catch (error) {
-			//quando occorre algum erro
-			console.error("Erro ao buscar itens:", error);
-		} finally {
-			//sempre executa, mesmo se der erro
-			setLoading(false);
-		}
-	}
-
-    // Carregar os itens do backend quando o componente for montado
+    // Carregar os itens da tabela de compras quando o componente for montado
     useEffect(() => {
-        fetchItems();
+        fetchCompras();
     }, []);
 
-	//Create
-	const addItem = async () => {
-		if (text.trim() === "") {
-			return;
-		}
-        try{
-            const response = await fetch(`${BASE_URL}/items`, {
+    // Adicionar um novo item
+    const addCompra = async () => {
+        if (newItem.trim() === '' || newQuantidade.trim() === '') {
+            Alert.alert(
+                'Erro',
+                'O nome e a quantidade do item são obrigatórios.'
+            );
+            return;
+        }
+        try {
+            const response = await fetch(`${BASE_URL}/compras`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ text: text.trim() }),
+                body: JSON.stringify({
+                    item: newItem,
+                    quantidade: parseInt(newQuantidade, 10),
+                }),
             });
             if (response.ok) {
-                await fetchItems(); // Atualiza a lista de itens após adicionar
-                setText(""); // Limpa o campo de texto
+                await fetchCompras(); // Atualiza a lista após adicionar
+                setNewItem(''); // Limpa o campo de texto
+                setNewQuantidade(''); // Limpa o campo de quantidade
             } else {
-                console.error("❌ Erro ao adicionar item:", response.statusText);
+                console.error('Erro ao adicionar item:', response.statusText);
             }
+        } catch (error) {
+            console.error('Erro ao adicionar item:', error);
         }
-        catch (error) {
-            console.error("❌ Erro ao adicionar item:", error);
+    };
+
+    // Editar um item
+    const saveEdit = async (id) => {
+        if (editingText.trim() === '' || editingQuantidade.trim() === '') {
+            Alert.alert(
+                'Erro',
+                'O nome e a quantidade do item são obrigatórios.'
+            );
             return;
         }
-
-		const newItem = {
-			id: Math.random().toString(),
-			text: text.trim(),
-		};
-		setItems([...items, newItem]);
-		setText("");
-		console.log(items);
-	};
-
-	// Update
-	const updateItem = async (id) => {
-		try {
-            const response = await fetch(`${BASE_URL}/items/${id}`, {
+        try {
+            const response = await fetch(`${BASE_URL}/compras/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ text: editItemText }),
+                body: JSON.stringify({
+                    item: editingText,
+                    quantidade: parseInt(editingQuantidade, 10),
+                }),
             });
             if (response.ok) {
-                await fetchItems(); // Atualiza a lista de itens após editar
-                setEditItemId(null); // Limpa o ID do item em edição
-                setEditItemText(""); // Limpa o campo de texto de edição
+                await fetchCompras(); // Atualiza a lista após editar
+                setEditingId(null); // Limpa o ID do item em edição
+                setEditingText(''); // Limpa o campo de texto de edição
+                setEditingQuantidade(''); // Limpa o campo de quantidade de edição
             } else {
-                console.error("❌ Erro ao atualizar item:", response.statusText);
+                console.error('❌ Erro ao editar item:', response.statusText);
             }
         } catch (error) {
-            console.error("❌ Erro ao atualizar item:", error);
+            console.error(' ❌Erro ao editar item:', error);
         }
+    };
 
-		setEditItemId(null);
-		setEditItemText("");
-	};
-
-	// Delete
-	const deleteItem = (id) => {
-		Alert.alert(
-            "Confirmar Exclusão",
-            "Do you really want to delete this item? 🥺",
+    // Excluir um item
+    const deleteCompra = (id) => {
+        Alert.alert(
+            'Confirmar Exclusão 💔',
+            'Você realmente deseja excluir este item? 🥺',
             [
                 {
-                    text: "Cancel ❤️‍🩹",
-                    style: "cancel",
+                    text: 'Cancelar ❤️‍🩹',
+                    style: 'cancel',
                 },
                 {
-                    text: "Delete 💔",
+                    text: 'Excluir',
                     onPress: async () => {
                         try {
-                            const response = await fetch(`${BASE_URL}/items/${id}`, {
-                                method: 'DELETE',
-                            });
+                            const response = await fetch(
+                                `${BASE_URL}/compras/${id}`,
+                                {
+                                    method: 'DELETE',
+                                }
+                            );
                             if (response.ok) {
-                                await fetchItems(); // Atualiza a lista de itens após excluir
+                                await fetchCompras(); // Atualiza a lista após excluir
                             } else {
-                                console.error("❌ Erro ao excluir item:", response.statusText);
+                                console.error(
+                                    '❌ Erro ao excluir item:',
+                                    response.statusText
+                                );
                             }
                         } catch (error) {
-                            console.error("❌ Erro ao excluir item:", error);
+                            console.error('❌ Erro ao excluir item:', error);
                         }
                     },
                 },
             ],
             { cancelable: true }
         );
-	};
+    };
 
-	// Read -> um unico item e/ou lista de itens
-	const renderItem = ({ item }) => {
-		if (item.id != editItemId) {
-			return (
-				<View style={styles.item}>
-					<Text style={styles.itemText}>{item.text}</Text>
-					<View style={styles.buttons}>
-						<Button
-							title="Edit"
-							onPress={() => {
-								setEditItemId(item.id);
-							}}
-							color={"orange"}></Button>
-						<Button
-							title="Delete"
-							onPress={() => deleteItem(item.id)}
-							color={"orange"}></Button>
-					</View>
-				</View>
-			);
-		} else {
-			// Um item está sendo editado
-			return (
-				<View style={styles.item}>
-					<TextInput
-						style={styles.editInput}
-						onChangeText={setEditItemText}
-						value={editItemText}
-						autoFocus
-					/>
-					<Button
-						title="Update"
-						onPress={() => updateItem(item.id)}
-						color={"orange"}></Button>
-				</View>
-			);
-		}
-	};
-
-	return (
-            <View style={styles.container}>
-                <TextInput
-                    style={styles.input}
-                    value={text}
-                    onChangeText={setText}
-                    placeholder="Enter text item"
-                />
-                <Button title="Add Item" onPress={addItem} color={'orange'} />
-                <FlatList
-                    data={items}
-                    renderItem={renderItem} // cada item da lista (items) vai ser processado
-                    keyExtractor={(item) => item.id} // retorna o id do item
-                    style={styles.list}
-                />
-                <Text style={styles.text}>Lista de itens com Fetch</Text>
-                <Image
-                    source={{ uri: 'https://picsum.photos/200' }}
-                    style={{ width: 200, height: 200 }}
-                />
-    
-                <StatusBar style="auto" />
-            </View>
+    // Incrementar a quantidade de um item
+    const incrementQuantity = async (id) => {
+        const updatedCompras = compras.map((compra) =>
+            compra.id === id
+                ? { ...compra, quantidade: compra.quantidade + 1 }
+                : compra
         );
+        setCompras(updatedCompras);
+
+        try {
+            await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantidade: updatedCompras.find(
+                        (compra) => compra.id === id
+                    ).quantidade,
+                }),
+            });
+        } catch (error) {
+            console.error('❌ Erro ao atualizar quantidade:', error);
+        }
+    };
+
+    // Decrementar a quantidade de um item
+    const decrementQuantity = async (id) => {
+        const updatedCompras = compras.map((compra) =>
+            compra.id === id && compra.quantidade > 0
+                ? { ...compra, quantidade: compra.quantidade - 1 }
+                : compra
+        );
+        setCompras(updatedCompras);
+
+        try {
+            await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantidade: updatedCompras.find(
+                        (compra) => compra.id === id
+                    ).quantidade,
+                }),
+            });
+        } catch (error) {
+            console.error('❌ Erro ao atualizar quantidade:', error);
+        }
+    };
+
+    // Renderizar cada item
+    const renderCompra = ({ item }) => (
+        <View style={styles.item}>
+            {editingId === item.id ? (
+                <>
+                    <TextInput
+                        style={styles.editInput}
+                        value={editingText}
+                        onChangeText={setEditingText}
+                        placeholder="Editar Nome"
+                    />
+                    <TextInput
+                        style={styles.editInput}
+                        value={editingQuantidade}
+                        onChangeText={setEditingQuantidade}
+                        placeholder="Editar Quantidade"
+                    />
+                    <Button
+                        title="Salvar"
+                        onPress={() => saveEdit(item.id)}
+                        color={'blue'}
+                    />
+                    <Button
+                        title="Cancelar"
+                        onPress={() => setEditingId(null)}
+                        color={'gray'}
+                    />
+                </>
+            ) : (
+                <>
+                    <Text style={styles.itemText}>
+                        {item.item} - Quantidade: {item.quantidade}
+                    </Text>
+                    <View style={styles.buttons}>
+                        <Button
+                            title="+"
+                            onPress={() => incrementQuantity(item.id)}
+                            color={'green'}
+                        />
+                        <Button
+                            title="-"
+                            onPress={() => decrementQuantity(item.id)}
+                            color={'red'}
+                        />
+                        <Button
+                            title="Editar"
+                            onPress={() => {
+                                setEditingId(item.id);
+                                setEditingText(item.item);
+                                setEditingQuantidade(
+                                    item.quantidade.toString()
+                                );
+                            }}
+                            color={'orange'}
+                        />
+                        <Button
+                            title="Excluir"
+                            onPress={() => deleteCompra(item.id)}
+                            color={'orange'}
+                        />
+                    </View>
+                </>
+            )}
+        </View>
+    );
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.text}>Lista de Compras</Text>
+            <TextInput
+                style={styles.input}
+                value={newItem}
+                onChangeText={setNewItem}
+                placeholder="Adicionar Nome"
+            />
+            <TextInput
+                style={styles.input}
+                value={newQuantidade}
+                onChangeText={setNewQuantidade}
+                placeholder="Adicionar Quantidade"
+                keyboardType="numeric"
+            />
+            <Button title="Adicionar" onPress={addCompra} color={'orange'} />
+            <FlatList
+                data={compras}
+                renderItem={renderCompra}
+                keyExtractor={(item) => item.id}
+                style={styles.list}
+            />
+            <StatusBar style="auto" />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -221,11 +298,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         fontFamily: 'cursive',
-    },
-    buttonContainer: {
-        marginTop: 12,
-        flexDirection: 'row',
-        gap: 10,
+        marginBottom: 20,
     },
     input: {
         height: 40,
@@ -252,6 +325,7 @@ const styles = StyleSheet.create({
     },
     buttons: {
         flexDirection: 'row',
+        gap: 10,
     },
     editInput: {
         flex: 1,
