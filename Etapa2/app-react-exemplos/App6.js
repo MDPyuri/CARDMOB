@@ -8,28 +8,25 @@ import {
     FlatList,
     TextInput,
     Alert,
-    Image,
 } from 'react-native';
 
 // Indicar endereço do backend
-const BASE_URL = 'http://MeuIP:5000';
+const BASE_URL = 'http://10.81.205.27:3000';
 
 export default function App() {
     const [compras, setCompras] = useState([]); // Lista de compras do backend
     const [newItem, setNewItem] = useState(''); // Novo item para adicionar
-    const [newDescricao, setNewDescricao] = useState(''); // Nova descrição para adicionar
     const [newQuantidade, setNewQuantidade] = useState(''); // Nova quantidade para adicionar
     const [editingId, setEditingId] = useState(null); // ID do item em edição
     const [editingText, setEditingText] = useState(''); // Texto do item em edição
-    const [editingDescricao, setEditingDescricao] = useState(''); // Descrição do item em edição
     const [editingQuantidade, setEditingQuantidade] = useState(''); // Quantidade do item em edição
 
     // Buscar todos os itens da tabela de compras no backend
     const fetchCompras = async () => {
         try {
-            const response = await fetch(`${BASE_URL}/api/catalog`);
+            const response = await fetch(`${BASE_URL}/compras`);
             const data = await response.json();
-            setCompras(data.catalog); // Atualiza o estado com os itens recebidos
+            setCompras(data); // Atualiza o estado com os itens recebidos
         } catch (error) {
             console.error('Erro ao buscar compras:', error);
         }
@@ -42,87 +39,66 @@ export default function App() {
 
     // Adicionar um novo item
     const addCompra = async () => {
-        if (
-            newItem.trim() === '' ||
-            newDescricao.trim() === '' ||
-            newQuantidade.trim() === ''
-        ) {
+        if (newItem.trim() === '' || newQuantidade.trim() === '') {
             Alert.alert(
                 'Erro',
-                'O nome, a descrição e o preço do item são obrigatórios.'
+                'O nome e a quantidade do item são obrigatórios.'
             );
             return;
         }
         try {
-            const response = await fetch(`${BASE_URL}/api/catalog`, {
+            const response = await fetch(`${BASE_URL}/compras`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: newItem,
-                    description: newDescricao,
-                    price: parseFloat(newQuantidade),
-                    enabled: true,
+                    item: newItem,
+                    quantidade: parseInt(newQuantidade, 10),
                 }),
             });
             if (response.ok) {
                 await fetchCompras(); // Atualiza a lista após adicionar
                 setNewItem(''); // Limpa o campo de texto
-                setNewDescricao(''); // Limpa o campo de descrição
                 setNewQuantidade(''); // Limpa o campo de quantidade
-                Alert.alert('Sucesso', 'Item adicionado com sucesso!');
             } else {
-                const errorData = await response.json();
                 console.error('Erro ao adicionar item:', response.statusText);
-                Alert.alert('Erro', 'Erro ao adicionar item. Tente novamente.');
             }
         } catch (error) {
             console.error('Erro ao adicionar item:', error);
-            Alert.alert('Erro', 'Erro de conexão. Verifique sua internet.');
         }
     };
 
     // Editar um item
     const saveEdit = async (id) => {
-        if (
-            editingText.trim() === '' ||
-            editingDescricao.trim() === '' ||
-            editingQuantidade.trim() === ''
-        ) {
+        if (editingText.trim() === '' || editingQuantidade.trim() === '') {
             Alert.alert(
                 'Erro',
-                'O nome, a descrição e o preço do item são obrigatórios.'
+                'O nome e a quantidade do item são obrigatórios.'
             );
             return;
         }
         try {
-            const response = await fetch(`${BASE_URL}/api/catalog/${id}`, {
-                method: 'PATCH',
+            const response = await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: editingText,
-                    description: editingDescricao,
-                    price: parseFloat(editingQuantidade),
+                    item: editingText,
+                    quantidade: parseInt(editingQuantidade, 10),
                 }),
             });
             if (response.ok) {
                 await fetchCompras(); // Atualiza a lista após editar
                 setEditingId(null); // Limpa o ID do item em edição
                 setEditingText(''); // Limpa o campo de texto de edição
-                setEditingDescricao(''); // Limpa o campo de descrição de edição
                 setEditingQuantidade(''); // Limpa o campo de quantidade de edição
-                Alert.alert('Sucesso', 'Item editado com sucesso!');
             } else {
-                const errorData = await response.json();
                 console.error('❌ Erro ao editar item:', response.statusText);
-                Alert.alert('Erro', 'Erro ao editar item. Tente novamente.');
             }
         } catch (error) {
-            console.error('❌ Erro ao editar item:', error);
-            Alert.alert('Erro', 'Erro de conexão. Verifique sua internet.');
+            console.error(' ❌Erro ao editar item:', error);
         }
     };
 
@@ -141,33 +117,21 @@ export default function App() {
                     onPress: async () => {
                         try {
                             const response = await fetch(
-                                `${BASE_URL}/api/catalog/${id}`,
+                                `${BASE_URL}/compras/${id}`,
                                 {
                                     method: 'DELETE',
                                 }
                             );
-                            if (response.ok || response.status === 204) {
+                            if (response.ok) {
                                 await fetchCompras(); // Atualiza a lista após excluir
-                                Alert.alert(
-                                    'Sucesso',
-                                    'Item excluído com sucesso!'
-                                );
                             } else {
                                 console.error(
                                     '❌ Erro ao excluir item:',
                                     response.statusText
                                 );
-                                Alert.alert(
-                                    'Erro',
-                                    'Erro ao excluir item. Tente novamente.'
-                                );
                             }
                         } catch (error) {
                             console.error('❌ Erro ao excluir item:', error);
-                            Alert.alert(
-                                'Erro',
-                                'Erro de conexão. Verifique sua internet.'
-                            );
                         }
                     },
                 },
@@ -176,11 +140,63 @@ export default function App() {
         );
     };
 
+    // Incrementar a quantidade de um item
+    const incrementQuantity = async (id) => {
+        const updatedCompras = compras.map((compra) =>
+            compra.id === id
+                ? { ...compra, quantidade: compra.quantidade + 1 }
+                : compra
+        );
+        setCompras(updatedCompras);
+
+        try {
+            await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantidade: updatedCompras.find(
+                        (compra) => compra.id === id
+                    ).quantidade,
+                }),
+            });
+        } catch (error) {
+            console.error('❌ Erro ao atualizar quantidade:', error);
+        }
+    };
+
+    // Decrementar a quantidade de um item
+    const decrementQuantity = async (id) => {
+        const updatedCompras = compras.map((compra) =>
+            compra.id === id && compra.quantidade > 0
+                ? { ...compra, quantidade: compra.quantidade - 1 }
+                : compra
+        );
+        setCompras(updatedCompras);
+
+        try {
+            await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantidade: updatedCompras.find(
+                        (compra) => compra.id === id
+                    ).quantidade,
+                }),
+            });
+        } catch (error) {
+            console.error('❌ Erro ao atualizar quantidade:', error);
+        }
+    };
+
     // Renderizar cada item
     const renderCompra = ({ item }) => (
         <View style={styles.item}>
             {editingId === item.id ? (
-                <View style={styles.editContainer}>
+                <>
                     <TextInput
                         style={styles.editInput}
                         value={editingText}
@@ -189,54 +205,45 @@ export default function App() {
                     />
                     <TextInput
                         style={styles.editInput}
-                        value={editingDescricao}
-                        onChangeText={setEditingDescricao}
-                        placeholder="Editar Descrição"
-                    />
-                    <TextInput
-                        style={styles.editInput}
                         value={editingQuantidade}
                         onChangeText={setEditingQuantidade}
-                        placeholder="Editar Preço"
-                        keyboardType="numeric"
+                        placeholder="Editar Quantidade"
                     />
-                    <View style={styles.editButtons}>
-                        <Button
-                            title="Salvar"
-                            onPress={() => saveEdit(item.id)}
-                            color={'blue'}
-                        />
-                        <Button
-                            title="Cancelar"
-                            onPress={() => setEditingId(null)}
-                            color={'gray'}
-                        />
-                    </View>
-                </View>
+                    <Button
+                        title="Salvar"
+                        onPress={() => saveEdit(item.id)}
+                        color={'blue'}
+                    />
+                    <Button
+                        title="Cancelar"
+                        onPress={() => setEditingId(null)}
+                        color={'gray'}
+                    />
+                </>
             ) : (
                 <>
-                    {item.image && (
-                        <Image
-                            source={{ uri: item.image }}
-                            style={styles.productImage}
-                            resizeMode="cover"
-                        />
-                    )}
-                    <View style={styles.itemInfo}>
-                        <Text style={styles.itemText}>{item.name}</Text>
-                        <Text style={styles.itemDesc}>{item.description}</Text>
-                        <Text style={styles.itemPrice}>
-                            Preço: R$ {item.price.toFixed(2)}
-                        </Text>
-                    </View>
+                    <Text style={styles.itemText}>
+                        {item.item} - Quantidade: {item.quantidade}
+                    </Text>
                     <View style={styles.buttons}>
+                        <Button
+                            title="+"
+                            onPress={() => incrementQuantity(item.id)}
+                            color={'green'}
+                        />
+                        <Button
+                            title="-"
+                            onPress={() => decrementQuantity(item.id)}
+                            color={'red'}
+                        />
                         <Button
                             title="Editar"
                             onPress={() => {
                                 setEditingId(item.id);
-                                setEditingText(item.name);
-                                setEditingDescricao(item.description || '');
-                                setEditingQuantidade(item.price.toString());
+                                setEditingText(item.item);
+                                setEditingQuantidade(
+                                    item.quantidade.toString()
+                                );
                             }}
                             color={'orange'}
                         />
@@ -253,7 +260,7 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Lista de Produtos</Text>
+            <Text style={styles.text}>Lista de Compras</Text>
             <TextInput
                 style={styles.input}
                 value={newItem}
@@ -262,22 +269,16 @@ export default function App() {
             />
             <TextInput
                 style={styles.input}
-                value={newDescricao}
-                onChangeText={setNewDescricao}
-                placeholder="Adicionar Descrição"
-            />
-            <TextInput
-                style={styles.input}
                 value={newQuantidade}
                 onChangeText={setNewQuantidade}
-                placeholder="Adicionar Preço"
+                placeholder="Adicionar Quantidade"
                 keyboardType="numeric"
             />
             <Button title="Adicionar" onPress={addCompra} color={'orange'} />
             <FlatList
                 data={compras}
                 renderItem={renderCompra}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id}
                 style={styles.list}
             />
             <StatusBar style="auto" />
@@ -311,57 +312,26 @@ const styles = StyleSheet.create({
     },
     item: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 10,
         padding: 10,
         backgroundColor: '#f0f0f0',
         borderRadius: 5,
-        minHeight: 80,
-    },
-    productImage: {
-        width: 60,
-        height: 60,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    itemInfo: {
-        flex: 1,
-        marginRight: 10,
     },
     itemText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    itemDesc: {
-        fontSize: 14,
-        color: '#555',
-        marginBottom: 5,
-    },
-    itemPrice: {
-        fontWeight: 'bold',
-        color: '#333',
+        flex: 1,
+        marginRight: 10,
     },
     buttons: {
         flexDirection: 'row',
         gap: 10,
     },
-    editContainer: {
-        flex: 1,
-        width: '100%',
-    },
     editInput: {
-        height: 40,
-        marginBottom: 10,
+        flex: 1,
+        marginRight: 10,
         borderColor: 'gray',
         borderWidth: 1,
         paddingHorizontal: 10,
-        borderRadius: 5,
-    },
-    editButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 10,
     },
 });
