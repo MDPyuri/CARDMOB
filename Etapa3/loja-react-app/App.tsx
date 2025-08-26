@@ -4,12 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 // import HomeScreen from './src/screens/HomeScreen';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import RootNavigator from './src/navigation/RootNavigator';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 export default function App() {
     return (
         <ThemeProvider>
-            {/* <HomeScreen/> */}
-            <RootNavigator />
+            <AuthProvider>
+                <RootNavigator />
+            </AuthProvider>
         </ThemeProvider>
     );
 }
