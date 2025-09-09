@@ -6,6 +6,7 @@ import { RootStackParamList, TabParamList } from './types';
 
 // Telas do app - área não logada
 import HomeScreen from '../screens/HomeScreen';
+import CatalogScreen from '../screens/catalog/CatalogScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
 // importar depois que implementar: DetailsScreen, SettingsScreen
@@ -19,8 +20,8 @@ function TabNavigator() {
             screenOptions={({ route, navigation }) => ({
                 tabBarIcon: ({ color, focused, size }) => {
                     let iconName;
-                    if (route.name === 'Home') {
-                        iconName = focused ? 'home' : 'home';
+                    if (route.name === 'Catalog') {
+                        iconName = focused ? 'tags' : 'tags';
                     }
                     return <FontAwesome name={iconName} size={size} color={color} />
                 },
@@ -29,7 +30,7 @@ function TabNavigator() {
                 headerShown: false,
             })}
         >
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Catalog" component={CatalogScreen} />
             <Tab.Screen name="Settings" component={HomeScreen} />
             <Tab.Screen name="Register" component={RegisterScreen} />
         </Tab.Navigator>
