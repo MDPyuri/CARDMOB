@@ -16,7 +16,6 @@ const CatalogCard = ({ product, onBuyPress }: any) => {
                         onPress={onBuyPress}
                     />
                 </View>
-                /
             </View>
         </View>
     );

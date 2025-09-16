@@ -9,6 +9,7 @@ import HomeScreen from '../screens/HomeScreen';
 import CatalogScreen from '../screens/catalog/CatalogScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
+import CartScreen from '../screens/cart/CartScreen';
 // importar depois que implementar: DetailsScreen, SettingsScreen
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +24,9 @@ function TabNavigator() {
                     if (route.name === 'Catalog') {
                         iconName = focused ? 'tags' : 'tags';
                     }
+                    if (route.name === 'Cart') {
+                        iconName = focused ? 'shopping-cart' : 'shopping-cart';
+                    }
                     return <FontAwesome name={iconName} size={size} color={color} />
                 },
                 tabBarActiveTintColor: 'red',
@@ -31,6 +35,8 @@ function TabNavigator() {
             })}
         >
             <Tab.Screen name="Catalog" component={CatalogScreen} />
+            <Tab.Screen name="Cart" component=
+            {CartScreen} />
             <Tab.Screen name="Settings" component={HomeScreen} />
             <Tab.Screen name="Register" component={RegisterScreen} />
         </Tab.Navigator>
