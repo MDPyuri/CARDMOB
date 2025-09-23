@@ -3,29 +3,30 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 
 import CartItem from './CartItem';
 
-const CartScreen = ({ navigation }: any) => {
+import { useShop } from '../../contexts/ShopContext';
 
-    const renderItem = ({item}: any) => (
-        <CartItem item={item} />
-    );
+const CartScreen = ({ navigation }: any) => {
+    const { cartItems } = useShop();
+
+    const renderItem = ({ item }: any) => <CartItem item={item} />;
 
     const cartTemp = [
         {
             id: 1,
             quantity: 2,
             price: 8.5,
-            name: "Brigadeiro promoção especial",
-            image: "http://10.81.205.27:5000/uploads/brigadeiro-de-pistache.png",
-        }
+            name: 'Brigadeiro promoção especial',
+            image: 'http://10.81.205.28:5000/uploads/brigadeiro-matcha-white.png',
+        },
     ];
 
     return (
         <View>
             <Text>Carrinho de compras</Text>
             <FlatList
-                data={cartTemp}
+                data={cartItems}
                 renderItem={renderItem}
-                keyExtractor={(item : any) => item.id.toString()}
+                keyExtractor={(item: any) => item.id.toString()}
             />
         </View>
     );
